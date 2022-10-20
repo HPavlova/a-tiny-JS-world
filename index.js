@@ -1,30 +1,96 @@
-import { print } from './js/lib.js';
-/* Refer to https://github.com/OleksiyRudenko/a-tiny-JS-world for the task details
-   Complete the below for code reviewers' convenience:
+import { print } from "./js/lib.js";
 
-   Code repository: _put repo URL here_
-   Web app: _put project's github pages URL here_
-   */
+class Creature {
+  constructor(species, name, gender, phrase) {
+    this.species = species;
+    this.name = name;
+    this.gender = gender;
+    this.phrase = phrase;
+    this.friends = [];
+    this.proporties = ["species", "name", "gender"];
+  }
 
-// ======== OBJECTS DEFINITIONS ========
-// Define your objects here
+  getFriends() {
+    if (this.friends.length > 0) {
+      return "; " + this.friends.map((friend) => friend.name).join(", ");
+    }
+    return "; " + "no friends";
+  }
 
+  setFriends(newFriends) {
+    this.friends = [...newFriends];
+  }
 
-// ======== OUTPUT ========
-/* Use print(message) for output.
-   Default tag for message is <pre>. Use print(message,'div') to change containing element tag.
+  getSaying() {
+    return "; " + this.phrase;
+  }
 
-   Message can contain HTML markup. You may also tweak index.html and/or styles.css.
-   However, please, REFRAIN from improving visuals at least until your code is reviewed
-   so code reviewers might focus on a single file that is index.js.
-   */
+  setSaying(newPhrase) {
+    this.phrase = newPhrase;
+  }
 
-/* Print examples:
-   print('ABC');
-   print('<strong>ABC</strong>');
-   print('<strong>ABC</strong>', 'div');
+  addProporties(...newProporties) {
+    this.proporties = [...this.proporties, ...newProporties];
+  }
 
-   print('human; John; male; 2; 2; Hello world!; Rex, Tom, Jenny');
-   print('human; <strong>John</strong>; male; 2; 2; <em>Hello world!</em>; Rex, Tom, Jenny');
-   print('human; <strong>John</strong>; male; 2; 2; <em>Hello world!</em>; Rex, Tom, Jenny', 'div');
-   */
+  getProportiesData() {
+    return this.proporties.map((prop) => this[prop]).join("; ");
+  }
+
+  getInfo() {
+    return this.getProportiesData() + this.getFriends() + this.getSaying();
+  }
+}
+
+class Animal extends Creature {
+  constructor(species, name, gender, phrase, legs) {
+    super(species, name, gender, phrase);
+    this.legs = legs;
+    this.addProporties("legs");
+  }
+}
+
+class Human extends Animal {
+  constructor(name, gender, phrase) {
+    super("human", name, gender, phrase, 2);
+    this.hands = 2;
+    this.addProporties("hands");
+  }
+}
+
+class Dog extends Animal {
+  constructor(name, gender, phrase) {
+    super("dog", name, gender, phrase, 4);
+  }
+}
+
+class Cat extends Animal {
+  constructor(name, gender, phrase) {
+    super("cat", name, gender, phrase, 4);
+  }
+}
+
+class CatWoman extends Human {
+  constructor(name, link) {
+    super(name, "female");
+    this.link = link;
+    this.species = "cat-woman";
+    this.phrase = link.phrase;
+  }
+}
+
+const cat = new Cat("Sandra", "female", "meow!")
+const dog = new Dog("Lego", "male", "woof!")
+const woman = new Human("Anna", "female", "Hi!")
+const man =new Human("Bob", "male", "Hello!")
+const catWoman= new CatWoman("Marta", cat)
+
+woman.setFriends([man, cat])
+cat.setFriends([woman, dog])
+catWoman.setFriends([man, cat])
+
+man.setSaying("Goodbye!")
+
+const inhabitants = [cat, dog, woman, man, catWoman]
+
+inhabitants.forEach(creature => print(creature.getInfo()))
